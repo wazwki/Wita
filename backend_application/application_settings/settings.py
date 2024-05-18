@@ -12,6 +12,8 @@ os.getenv("")
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+PROJECT_DIR = Path(__file__).resolve().parent.parent.parent
+
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = False
@@ -28,7 +30,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'whitenoise',
-    'main_application.apps.MainAppConfig',
+    'main_app.apps.MainAppConfig',
+    'api_app.apps.ApiAppConfig',
 ]
 
 MIDDLEWARE = [
@@ -48,7 +51,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            BASE_DIR / "main_application/templates/main_application"
+            PROJECT_DIR / "templates/"
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -100,7 +103,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-STATIC_ROOT = BASE_DIR / 'static/'
+STATIC_ROOT = PROJECT_DIR / 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
