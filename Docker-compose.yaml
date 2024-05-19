@@ -1,0 +1,86 @@
+version: '3.9'
+
+networks:
+  backend:
+    driver: bridge
+  frontend:
+    driver: bridge
+services:
+
+  web-site:
+    build:
+      context: ./backend_application
+    command: >
+      sh -c "sleep 3
+      &&python manage.py migrate
+      &&gunicorn application_settings.wsgi:application --bind 0.0.0.0:8000"
+    networks:
+      - backend
+    environment:
+      - SECRET_KEY=$SECRET_KEY
+      - DB_HOST=$DB_HOST
+      - DB_NAME=$DB_NAME
+      - DB_USER=$DB_USER
+      - DB_PASSWORD=$DB_PASSWORD
+      - DB_PORT=$DB_PORT
+      - SOCIAL_AUTH_GITHUB_KEY=$SOCIAL_AUTH_GITHUB_KEY
+      - SOCIAL_AUTH_GITHUB_SECRET=$SOCIAL_AUTH_GITHUB_SECRET
+    depends_on:
+      - database
+
+
+  react:
+    build:
+      context: ./frontend_application
+    command: >
+      sh -c ""
+    networks:
+      - backend
+    environment:
+      -
+    depends_on:
+      - web-site
+    
+
+
+  database:
+    image: postgres:16.2-alpine
+    networks:
+      - backend
+    environment:
+      - POSTGRES_DB=$POSTGRES_DB
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+  
+
+  redis:
+    image: redis
+    hostname: redis
+    networks:
+      - backend
+
+
+  worker:
+    build: 
+      context: ./backend_application
+    hostname: worker
+    entrypoint: celery
+    command: -A celery_app.app worker
+    links:
+      - redis
+    depends_on:
+      - redis
+    networks:
+      - backend
+
+
+  nginx:
+    build: 
+      context: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - web-site
+    networks:
+      - frontend
+      - backend
