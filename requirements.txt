@@ -10,3 +10,4 @@ social-auth-app-django==5.4.1
 drf-yasg==1.21.7
 redis==5.0.4
 celery==5.4.0
+djangorestframework-simplejwt==5.3.1

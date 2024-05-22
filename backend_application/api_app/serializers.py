@@ -1,11 +1,32 @@
 ''' Serializers for mainapp '''
 from rest_framework.serializers import ModelSerializer
 
-from .models import Test
+from .models import Task, Command, Project, Company
 
 
-class TestSerializer(ModelSerializer):
-    ''' Serializer for tets '''
+class TaskSerializer(ModelSerializer):
+    ''' Serializer for tasks '''
     class Meta:
-        model = Test
+        model = Task
+        fields = '__all__'
+
+
+class CommandSerializer(ModelSerializer):
+    ''' Serializer for commands '''
+    class Meta:
+        model = Command
+        fields = '__all__'
+
+
+class CompanySerializer(ModelSerializer):
+    ''' Serializer for company '''
+    class Meta:
+        model = Company
+        fields = '__all__'
+
+
+class ProjectSerializer(ModelSerializer):
+    ''' Serializer for projects '''
+    class Meta:
+        model = Project
         fields = '__all__'
