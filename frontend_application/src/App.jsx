@@ -1,41 +1,74 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { LaptopOutlined, NotificationOutlined, UserOutlined } from '@ant-design/icons';
-import { Breadcrumb, Layout, Menu, theme } from 'antd';
+import { Breadcrumb, Layout, Menu, theme, Button } from 'antd';
+import { Route, Routes, Link, useLocation } from 'react-router-dom';
 import Task from './components/task';
+import Profile from './components/Profile';
 import Login from './components/Loginpage';
 
 const { Header, Content, Sider } = Layout;
 
-const items1 = [
-  { key: '1', label: 'Your Tasks' },
-  { key: '2', label: 'Projects' },
-  { key: '3', label: 'Commands' },
-  { 
-    key: 'auth', 
-    label: <a href="/login" style={{ color: '#fff' }}>Login</a>, 
-    style: { marginLeft: 'auto' } 
-  } ];
-
-const items2 = [UserOutlined, LaptopOutlined, NotificationOutlined].map((icon, index) => {
-  const key = String(index + 1);
-  return {
-    key: `${key}`,
-    icon: React.createElement(icon),
-    label: `${key}`,
-    children: new Array(4).fill(null).map((_, j) => {
-      const subKey = index * 4 + j + 1;
-      return {
-        key: subKey,
-        label: `${subKey}`,
-      };
-    }),
-  };
-});
-
 const App = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem('access');
+    setIsLoggedIn(!!accessToken);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('access');
+    localStorage.removeItem('refresh');
+    setIsLoggedIn(false);
+  };
+
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+
+  const menuItems = [
+    { key: 'tasks', label: <Link to="/tasks">Your tasks</Link>, breadcrumbName: 'Tasks' },
+    { key: 'projects', label: <Link to="/projects">Projects</Link>, breadcrumbName: 'Projects' },
+    { key: 'commands', label: <Link to="/commands">Commands</Link>, breadcrumbName: 'Commands' },
+    isLoggedIn ? 
+      {
+        key: 'profile',
+        label: <Link to="/profile" style={{ color: '#fff' }}>Profile</Link>,
+        breadcrumbName: 'Profile',
+        style: { marginLeft: 'auto' }
+      } :
+      {
+        key: 'login',
+        label: <Link to="/login" style={{ color: '#fff' }}>Login</Link>,
+        breadcrumbName: 'Login',
+        style: { marginLeft: 'auto' }
+      }
+  ];
+
+  const sideMenuItems = [UserOutlined, LaptopOutlined, NotificationOutlined].map((icon, index) => {
+    const key = String(index + 1);
+    return {
+      key: `${key}`,
+      icon: React.createElement(icon),
+      label: `${key}`,
+      children: new Array(4).fill(null).map((_, j) => {
+        const subKey = index * 4 + j + 1;
+        return {
+          key: subKey,
+          label: `${subKey}`,
+        };
+      }),
+    };
+  });
+
+  const getBreadcrumbName = (path) => {
+    const item = menuItems.find((menuItem) => menuItem.key === path);
+    return item ? item.breadcrumbName : '';
+  };
+
+  const currentPath = location.pathname.split('/')[1] || '';
+  const breadcrumbName = getBreadcrumbName(currentPath);
 
   return (
     <Layout style={{ height: '100vh' }}>
@@ -44,8 +77,8 @@ const App = () => {
         <Menu
           theme="dark"
           mode="horizontal"
-          defaultSelectedKeys={['2']}
-          items={items1}
+          selectedKeys={[currentPath]}
+          items={menuItems}
           style={{ flex: 1, minWidth: 0}}
         />
       </Header>
@@ -54,17 +87,15 @@ const App = () => {
           <Menu
             theme="dark"
             mode="inline"
-            defaultSelectedKeys={['1']}
+            selectedKeys={[currentPath]}
             defaultOpenKeys={['sub1']}
             style={{ height: '100%', borderRight: 0 }}
-            items={items2}
+            items={sideMenuItems}
           />
         </Sider>
         <Layout style={{ padding: '0 24px 24px' }}>
           <Breadcrumb style={{ margin: '16px 0' }}>
-            <Breadcrumb.Item>Home</Breadcrumb.Item>
-            <Breadcrumb.Item>List</Breadcrumb.Item>
-            <Breadcrumb.Item>App</Breadcrumb.Item>
+            <Breadcrumb.Item>{breadcrumbName}</Breadcrumb.Item>
           </Breadcrumb>
           <Content
             style={{
@@ -75,7 +106,12 @@ const App = () => {
               borderRadius: borderRadiusLG,
             }}
           >
-            <Task />
+            <Routes>
+              <Route path="/" element={<div style={{ textAlign: 'center', fontSize: '12em', margin: '0px', marginTop: '15%', fontWeight: 'bold', textShadow: '0px 10px #1678ff' }}>Welcome to Wita.</div>} />
+              <Route path="/tasks" element={<Task />} />
+              <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
+              <Route path="/profile" element={<Profile handleLogout={handleLogout} />} />
+            </Routes>
           </Content>
         </Layout>
       </Layout>
