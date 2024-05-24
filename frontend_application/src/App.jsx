@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { LaptopOutlined, NotificationOutlined, UserOutlined, ProjectOutlined, TeamOutlined, LogoutOutlined, LoginOutlined, PlusOutlined, FormOutlined } from '@ant-design/icons';
-import { Breadcrumb, Layout, Menu, theme } from 'antd';
+import { LaptopOutlined, NotificationOutlined, UserOutlined, ProjectOutlined, TeamOutlined, LogoutOutlined, LoginOutlined, PlusOutlined, FormOutlined, MenuOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
+import { Breadcrumb, Layout, Menu, theme, Button } from 'antd';
 import { Route, Routes, Link, useLocation } from 'react-router-dom';
 import Task from './components/Task';
 import Task_create from './components/Task_create';
@@ -10,11 +10,14 @@ import Command from './components/Command';
 import Command_create from './components/Command_create';
 import Profile from './components/Profile';
 import Login from './components/Loginpage';
+import Progress from './components/Progress';
+
 
 const { Header, Content, Sider } = Layout;
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -26,6 +29,10 @@ const App = () => {
     localStorage.removeItem('access');
     localStorage.removeItem('refresh');
     setIsLoggedIn(false);
+  };
+
+  const toggleCollapsed = () => {
+    setCollapsed(!collapsed);
   };
 
   const {
@@ -79,9 +86,17 @@ const App = () => {
         { key: 'task_create', label: <Link to="/task_create">Create Task</Link>, icon: <PlusOutlined /> },
       ],
     },
+    {
+      key: 'sub4',
+      icon: <FormOutlined />,
+      label: 'Progress',
+      children: [
+        { key: 'progress', label: <Link to="/progress">View Board</Link> },
+      ],
+    },
     isLoggedIn
       ? {
-          key: '4',
+          key: '5',
           icon: <LogoutOutlined />,
           label: (
             <span onClick={handleLogout} style={{ cursor: 'pointer' }}>
@@ -90,7 +105,7 @@ const App = () => {
           ),
         }
       : {
-          key: '5',
+          key: '6',
           icon: <LoginOutlined />,
           label: <Link to="/login">Login</Link>,
         },
@@ -117,7 +132,14 @@ const App = () => {
         />
       </Header>
       <Layout>
-        <Sider width={200} style={{ background: colorBgContainer, overflow: 'auto', height: '100vh', position: 'fixed', left: 0 }}>
+        <Sider
+          collapsible
+          collapsed={collapsed}
+          onCollapse={toggleCollapsed}
+          width={200}
+          collapsedWidth={50}
+          style={{ background: colorBgContainer, overflow: 'auto', height: '100vh', position: 'fixed', left: 0 }}
+        >
           <Menu
             theme="dark"
             mode="inline"
@@ -126,8 +148,15 @@ const App = () => {
             style={{ height: '100%', borderRight: 0 }}
             items={sideMenuItems}
           />
+          <Button
+            type="primary"
+            onClick={toggleCollapsed}
+            style={{ position: 'absolute', bottom: 10, left: collapsed ? 10 : 60 }}
+          >
+            {collapsed ? <MenuOutlined /> : <MenuUnfoldOutlined />}
+          </Button>
         </Sider>
-        <Layout style={{ marginLeft: 200, padding: '0 24px 24px' }}>
+        <Layout style={{ marginLeft: collapsed ? 50 : 200, padding: '0 24px 24px' }}>
           <Breadcrumb style={{ margin: '16px 0' }}>
             <Breadcrumb.Item>{breadcrumbName}</Breadcrumb.Item>
           </Breadcrumb>
@@ -139,7 +168,7 @@ const App = () => {
               background: colorBgContainer,
               borderRadius: borderRadiusLG,
               overflow: 'auto',
-              maxHeight: 'calc(100vh - 64px - 48px)' // Adjusting height to fit within the layout
+              maxHeight: 'calc(100vh - 64px - 48px)', // Adjusting height to fit within the layout
             }}
           >
             <Routes>
@@ -152,6 +181,7 @@ const App = () => {
               <Route path="/command_create" element={<Command_create />} />
               <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
               <Route path="/profile" element={<Profile handleLogout={handleLogout} />} />
+              <Route path="/progress" element={<Progress />} />
             </Routes>
           </Content>
         </Layout>

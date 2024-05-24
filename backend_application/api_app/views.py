@@ -84,7 +84,6 @@ class CommandViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(group=self.request.user.profile.group, created_by=self.request.user)
- 
 
 
 class CompanyViewSet(ModelViewSet):

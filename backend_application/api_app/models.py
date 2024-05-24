@@ -45,14 +45,9 @@ class Project(models.Model):
 
 
 class Task(models.Model):
-    CHOICES = (
-        (1, 'Added'),
-        (2, 'In work'),
-        (3, 'Complete'),
-    )
     name = models.CharField(max_length=255)
     description = models.TextField()
-    status = models.PositiveSmallIntegerField(choices=CHOICES)
+    status = models.CharField(max_length=20, choices=[('to_do', 'TO DO'), ('in_progress', 'IN PROGRESS'), ('code_review', 'CODE REVIEW'), ('done', 'DONE')])
     command = models.ForeignKey(Command, related_name='tasks', on_delete=models.CASCADE)
     project = models.ForeignKey(Project, related_name='tasks', on_delete=models.CASCADE)
     assigned_to = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tasks')
