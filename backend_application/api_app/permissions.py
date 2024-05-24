@@ -14,3 +14,19 @@ class IsOwnerOrStaffOrReadOnly(BasePermission):
             obj.owner == request.user or
             request.user.is_staff
         )
+
+
+class IsOwnerOrInGroup(BasePermission):
+    """
+    Custom permission to only allow owners of an object or users in the same group to view/edit it.
+    """
+    def has_object_permission(self, request, view, obj):
+        # Проверяем, является ли пользователь создателем объекта
+        if obj.created_by == request.user:
+            return True
+        
+        # Проверяем, находится ли пользователь в группе, связанной с объектом
+        if hasattr(obj, 'group'):
+            return obj.group in request.user.profile.groups.all()
+        
+        return False
