@@ -24,6 +24,15 @@ class ProfileView(views.APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        users = User.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
+
+
+class UserView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
         user = request.user
         serializer = UserSerializer(user)
         return Response(serializer.data)
@@ -67,10 +76,10 @@ class TaskViewSet(ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Task.objects.filter(project__group=user.profile.group) | Task.objects.filter(created_by=user)
+        return Task.objects.filter(company=user.profile.group) | Task.objects.filter(created_by=user)
 
     def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user, assigned_to=self.request.user)
+        serializer.save(created_by=self.request.user)
 
 
 class CommandViewSet(ModelViewSet):
@@ -80,10 +89,10 @@ class CommandViewSet(ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Command.objects.filter(group=user.profile.group)
+        return Command.objects.filter(company=user.profile.group) |  Command.objects.filter(created_by=user)
 
     def perform_create(self, serializer):
-        serializer.save(group=self.request.user.profile.group, created_by=self.request.user)
+        serializer.save(created_by=self.request.user)
 
 
 class CompanyViewSet(ModelViewSet):
@@ -96,7 +105,7 @@ class CompanyViewSet(ModelViewSet):
         return Company.objects.filter(group=user.profile.group) | Company.objects.filter(created_by=user)
 
     def perform_create(self, serializer):
-        serializer.save(group=self.request.user.profile.group, created_by=self.request.user)
+        serializer.save(group=self.name)
 
 
 class ProjectViewSet(ModelViewSet):
@@ -108,7 +117,7 @@ class ProjectViewSet(ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Project.objects.filter(group=user.profile.group) | Project.objects.filter(created_by=user)
+        return Project.objects.filter(company=user.profile.group) | Project.objects.filter(created_by=user)
 
     def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user, group=self.request.user.profile.group)
+        serializer.save(created_by=self.request.user)

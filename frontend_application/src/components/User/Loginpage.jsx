@@ -14,6 +14,7 @@ const Login = () => {
       const response = await axios.post('http://127.0.0.1:8000/api/token/', values);
       localStorage.setItem('access', response.data.access);
       localStorage.setItem('refresh', response.data.refresh);
+      localStorage.setItem('user_id', response.data.user_id);
       message.success('Login successful!');
       navigate('/');
     } catch (error) {

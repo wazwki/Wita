@@ -5,7 +5,7 @@ from rest_framework.routers import SimpleRouter
 
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from .views import RegisterView, ProfileView
+from .views import RegisterView, ProfileView, UserView
 from .swagger import schema_view
 from . import views
 
@@ -27,6 +27,7 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('register/', RegisterView.as_view(), name='register'),
     path('profile/', ProfileView.as_view(), name='profile'),
+    path('user/', UserView.as_view(), name='user'),
 ]
 
 urlpatterns += router.urls

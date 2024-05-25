@@ -8,6 +8,7 @@ const Task_create = () => {
   const [tasksData, setTasksData] = useState([]);
   const [commandsData, setCommandsData] = useState([]);
   const [projectsData, setProjectsData] = useState([]);
+  const [companiesData, setCompaniesData] = useState([]); // Добавить состояние для компаний
   const [usersData, setUsersData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
@@ -15,7 +16,7 @@ const Task_create = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [tasksResponse, commandsResponse, projectsResponse, usersResponse] = await Promise.all([
+        const [tasksResponse, commandsResponse, projectsResponse, usersResponse, companiesResponse] = await Promise.all([
           axios.get('http://127.0.0.1:8000/api/task/', {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('access')}`
@@ -31,7 +32,12 @@ const Task_create = () => {
               Authorization: `Bearer ${localStorage.getItem('access')}`
             }
           }),
-          axios.get('http://127.0.0.1:8000/api/users/', {
+          axios.get('http://127.0.0.1:8000/api/profile/', {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('access')}`
+            }
+          }),
+          axios.get('http://127.0.0.1:8000/api/company/', {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('access')}`
             }
@@ -42,6 +48,7 @@ const Task_create = () => {
         setCommandsData(commandsResponse.data);
         setProjectsData(projectsResponse.data);
         setUsersData(usersResponse.data);
+        setCompaniesData(companiesResponse.data); // Сохранить данные о компаниях
       } catch (error) {
         console.error('Error fetching data', error);
       } finally {
@@ -102,15 +109,16 @@ const Task_create = () => {
             rules={[{ required: true, message: 'Please select the status' }]}
           >
             <Select>
-              <Option value={1}>Added</Option>
-              <Option value={2}>In work</Option>
-              <Option value={3}>Complete</Option>
+              <Option value={'to_do'}>TO DO</Option>
+              <Option value={'in_progress'}>IN PROGRESS</Option>
+              <Option value={'code_review'}>CODE REVIEW</Option>
+              <Option value={'done'}>DONE</Option>
             </Select>
           </Form.Item>
           <Form.Item
             name="command"
-            label="Command ID"
-            rules={[{ required: true, message: 'Please select the command ID' }]}
+            label="Command"
+            rules={[{ required: true, message: 'Please select the command' }]}
           >
             <Select placeholder="Select command">
               {commandsData.map(command => (
@@ -122,8 +130,8 @@ const Task_create = () => {
           </Form.Item>
           <Form.Item
             name="project"
-            label="Project ID"
-            rules={[{ required: true, message: 'Please select the project ID' }]}
+            label="Project"
+            rules={[{ required: true, message: 'Please select the project' }]}
           >
             <Select placeholder="Select project">
               {projectsData.map(project => (
@@ -138,8 +146,8 @@ const Task_create = () => {
             label="Assigned To"
             rules={[{ required: true, message: 'Please select the user to assign to' }]}
           >
-            <Select placeholder="Select user">
-            {usersData.map(user => (
+            <Select mode="multiple" placeholder="Select users">
+              {Array.isArray(usersData) && usersData.map(user => (
                 <Option key={user.id} value={user.id}>
                   {user.username} ({user.email})
                 </Option>
@@ -147,11 +155,17 @@ const Task_create = () => {
             </Select>
           </Form.Item>
           <Form.Item
-            name="created_by"
-            label="Created By"
-            rules={[{ required: true, message: 'Please enter the user ID of the creator' }]}
+            name="company"
+            label="Company"
+            rules={[{ required: true, message: 'Please select the company' }]}
           >
-            <Input />
+            <Select placeholder="Select company">
+              {companiesData.map(company => (
+                <Option key={company.id} value={company.id}>
+                  {company.name}
+                </Option>
+              ))}
+            </Select>
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={creating}>
@@ -165,3 +179,4 @@ const Task_create = () => {
 };
 
 export default Task_create;
+

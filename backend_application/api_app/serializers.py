@@ -1,7 +1,7 @@
 ''' Serializers for mainapp '''
 from django.contrib.auth.models import User
 
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, PrimaryKeyRelatedField
 
 from .models import Task, Command, Project, Company
 
@@ -26,7 +26,7 @@ class RegisterSerializer(ModelSerializer):
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'password', 'email', 'first_name', 'last_name')
+        fields = '__all__'
 
 
 class TaskSerializer(ModelSerializer):
@@ -45,6 +45,7 @@ class CommandSerializer(ModelSerializer):
 
 class CompanySerializer(ModelSerializer):
     ''' Serializer for company '''
+    users = PrimaryKeyRelatedField(many=True, queryset=User.objects.all())
     class Meta:
         model = Company
         fields = '__all__'

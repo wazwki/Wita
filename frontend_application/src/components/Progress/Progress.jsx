@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Card, Col, Row, Spin } from 'antd';
+import { useParams } from 'react-router-dom';
 
 const Progress = () => {
+  const { projectId } = useParams();
   const [tasksData, setTasksData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/api/tasks/', {
+        const response = await axios.get('http://127.0.0.1:8000/api/task/', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('access')}`,
           },
         });
-        setTasksData(response.data);
+        setTasksData(response.data.filter(task => task.project === parseInt(projectId, 10)));
       } catch (error) {
         console.error('Error fetching tasks', error);
       } finally {
@@ -23,7 +25,7 @@ const Progress = () => {
     };
 
     fetchTasks();
-  }, []);
+  }, [projectId]);
 
   const columns = {
     to_do: 'TO DO',

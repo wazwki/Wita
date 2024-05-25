@@ -2,21 +2,21 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Card, List, Spin } from 'antd';
 
-const Command = () => {
-  const [commandsData, setCommandsData] = useState([]);
+const Project = () => {
+  const [projectsData, setProjectsData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/command/`, {
+        const response = await axios.get(`http://127.0.0.1:8000/api/project/`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('access')}`
           }
         });
-        setCommandsData(response.data);
+        setProjectsData(response.data);
       } catch (error) {
-        console.error('Error fetching command data', error);
+        console.error('Error fetching project data', error);
       } finally {
         setLoading(false);
       }
@@ -29,36 +29,28 @@ const Command = () => {
     return <Spin tip="Loading..." />;
   }
 
-  if (!commandsData.length) {
-    return <div>No commands available</div>;
+  if (!projectsData.length) {
+    return <div>No projects available</div>;
   }
 
   return (
     <div style={{ margin: 'auto', marginTop: '50px', maxWidth: '800px' }}>
       <List
         grid={{ gutter: 16, column: 1 }}
-        dataSource={commandsData}
-        renderItem={command => (
+        dataSource={projectsData}
+        renderItem={project => (
           <List.Item>
-            <Card title={command.name || 'Command'}>
-              <p><strong>Name:</strong> {command.name}</p>
-              <p><strong>Company ID:</strong> {command.company}</p>
-              <p><strong>Group ID:</strong> {command.group}</p>
+            <Card title={project.name || 'Project'}>
+              <p><strong>Name:</strong> {project.name}</p>
+              <p><strong>Description:</strong> {project.description}</p>
+              <p><strong>Company ID:</strong> {project.company}</p>
+              <p><strong>Created By:</strong> {project.created_by}</p>
               <p><strong>Users:</strong></p>
               <List
-                dataSource={command.users}
+                dataSource={project.users}
                 renderItem={user => (
                   <List.Item key={user.id}>
                     {user.username} ({user.email})
-                  </List.Item>
-                )}
-              />
-              <p><strong>Projects:</strong></p>
-              <List
-                dataSource={command.projects}
-                renderItem={project => (
-                  <List.Item key={project.id}>
-                    {project.name}
                   </List.Item>
                 )}
               />
@@ -70,4 +62,4 @@ const Command = () => {
   );
 };
 
-export default Command;
+export default Project;

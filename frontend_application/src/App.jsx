@@ -2,37 +2,57 @@ import React, { useState, useEffect } from 'react';
 import { LaptopOutlined, NotificationOutlined, UserOutlined, ProjectOutlined, TeamOutlined, LogoutOutlined, LoginOutlined, PlusOutlined, FormOutlined, MenuOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 import { Breadcrumb, Layout, Menu, theme, Button } from 'antd';
 import { Route, Routes, Link, useLocation } from 'react-router-dom';
-import Task from './components/Task';
-import Task_create from './components/Task_create';
-import Project from './components/Project';
-import Project_create from './components/Project_create';
-import Command from './components/Command';
-import Command_create from './components/Command_create';
-import Profile from './components/Profile';
-import Login from './components/Loginpage';
-import Progress from './components/Progress';
-
+import Task from './components/Task/Task';
+import Task_create from './components/Task/Task_create';
+import Project from './components/Project/Project';
+import Project_create from './components/Project/Project_create';
+import Command from './components/Command/Command';
+import Command_create from './components/Command/Command_create';
+import Company from './components/Company/Company';
+import Company_create from './components/Company/Company_create';
+import Profile from './components/User/Profile';
+import Login from './components/User/Loginpage';
+import Progress from './components/Progress/Progress';
+import axios from 'axios';
 
 const { Header, Content, Sider } = Layout;
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [projects, setProjects] = useState([]);
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
     const accessToken = localStorage.getItem('access');
     setIsLoggedIn(!!accessToken);
+
+    const fetchProjects = async () => {
+      try {
+        const response = await axios.get('http://127.0.0.1:8000/api/project/', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('access')}`,
+          },
+        });
+        setProjects(response.data);
+      } catch (error) {
+        console.error('Error fetching projects', error);
+      }
+    };
+
+    if (accessToken) {
+      fetchProjects();
+    }
   }, []);
 
+  const toggleCollapsed = () => {
+    setCollapsed(!collapsed);
+  };
+  
   const handleLogout = () => {
     localStorage.removeItem('access');
     localStorage.removeItem('refresh');
     setIsLoggedIn(false);
-  };
-
-  const toggleCollapsed = () => {
-    setCollapsed(!collapsed);
   };
 
   const {
@@ -43,6 +63,7 @@ const App = () => {
     { key: 'tasks', label: <Link to="/tasks">Your tasks</Link>, breadcrumbName: 'Tasks' },
     { key: 'projects', label: <Link to="/projects">Projects</Link>, breadcrumbName: 'Projects' },
     { key: 'commands', label: <Link to="/commands">Commands</Link>, breadcrumbName: 'Commands' },
+    { key: 'companies', label: <Link to="/companies">Companies</Link>, breadcrumbName: 'Companies' },
     isLoggedIn ? 
       {
         key: 'profile',
@@ -88,15 +109,25 @@ const App = () => {
     },
     {
       key: 'sub4',
-      icon: <FormOutlined />,
+      icon: <ProjectOutlined />,
       label: 'Progress',
+      children: projects.map(project => ({
+        key: `progress_${project.id}`,
+        label: <Link to={`/progress/${project.id}`}>{project.name}</Link>,
+      })),
+    },
+    {
+      key: 'sub5',
+      icon: <UserOutlined />,
+      label: 'Companies',
       children: [
-        { key: 'progress', label: <Link to="/progress">View Board</Link> },
+        { key: 'companies', label: <Link to="/companies">View Companies</Link> },
+        { key: 'company_create', label: <Link to="/company_create">Create Company</Link>, icon: <PlusOutlined /> },
       ],
     },
     isLoggedIn
       ? {
-          key: '5',
+          key: '4',
           icon: <LogoutOutlined />,
           label: (
             <span onClick={handleLogout} style={{ cursor: 'pointer' }}>
@@ -105,7 +136,7 @@ const App = () => {
           ),
         }
       : {
-          key: '6',
+          key: '5',
           icon: <LoginOutlined />,
           label: <Link to="/login">Login</Link>,
         },
@@ -127,7 +158,7 @@ const App = () => {
           theme="dark"
           mode="horizontal"
           selectedKeys={[currentPath]}
-          items={menuItems.filter(item => item.key !== 'project_create' && item.key !== 'command_create' && item.key !== 'task_create')}
+          items={menuItems.filter(item => item.key !== 'project_create' && item.key !== 'command_create' && item.key !== 'task_create' && item.key !== 'company_create')}
           style={{ flex: 1, minWidth: 0 }}
         />
       </Header>
@@ -179,9 +210,13 @@ const App = () => {
               <Route path="/project_create" element={<Project_create />} />
               <Route path="/commands" element={<Command />} />
               <Route path="/command_create" element={<Command_create />} />
+              <Route path="/companies" element={<Company />} />
+              <Route path="/company_create" element={<Company_create />} />
               <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
               <Route path="/profile" element={<Profile handleLogout={handleLogout} />} />
-              <Route path="/progress" element={<Progress />} />
+              {projects.map(project => (
+                <Route key={project.id} path={`/progress/:projectId`} element={<Progress />} />
+              ))}
             </Routes>
           </Content>
         </Layout>
@@ -191,3 +226,4 @@ const App = () => {
 };
 
 export default App;
+

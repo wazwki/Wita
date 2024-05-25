@@ -1,25 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Card, List, Spin, Form, Input, Button, Select, notification } from 'antd';
+import { Card, Form, Input, Button, Select, notification, Spin } from 'antd';
 
 const { Option } = Select;
 
 const Project_create = () => {
   const [projectsData, setProjectsData] = useState([]);
   const [usersData, setUsersData] = useState([]);
+  const [companiesData, setCompaniesData] = useState([]); // Добавить состояние для компаний
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [projectsResponse, usersResponse] = await Promise.all([
+        const [projectsResponse, usersResponse, companiesResponse] = await Promise.all([
           axios.get('http://127.0.0.1:8000/api/project/', {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('access')}`
             }
           }),
-          axios.get('http://127.0.0.1:8000/api/users/', {
+          axios.get('http://127.0.0.1:8000/api/profile/', {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('access')}`
+            }
+          }),
+          axios.get('http://127.0.0.1:8000/api/company/', {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('access')}`
             }
@@ -28,8 +34,10 @@ const Project_create = () => {
 
         setProjectsData(projectsResponse.data);
         setUsersData(usersResponse.data);
+        setCompaniesData(companiesResponse.data); // Сохранить данные о компаниях
       } catch (error) {
         console.error('Error fetching data', error);
+        notification.error({ message: 'Error fetching data' });
       } finally {
         setLoading(false);
       }
@@ -84,24 +92,16 @@ const Project_create = () => {
           </Form.Item>
           <Form.Item
             name="company"
-            label="Company ID"
-            rules={[{ required: true, message: 'Please enter the company ID' }]}
+            label="Company"
+            rules={[{ required: true, message: 'Please select the company' }]}
           >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="group"
-            label="Group ID"
-            rules={[{ required: true, message: 'Please enter the group ID' }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="created_by"
-            label="Created By"
-            rules={[{ required: true, message: 'Please enter the user ID of the creator' }]}
-          >
-            <Input />
+            <Select placeholder="Select company">
+              {companiesData.map(company => (
+                <Option key={company.id} value={company.id}>
+                  {company.name}
+                </Option>
+              ))}
+            </Select>
           </Form.Item>
           <Form.Item
             name="users"
@@ -109,7 +109,7 @@ const Project_create = () => {
             rules={[{ required: true, message: 'Please select the users' }]}
           >
             <Select mode="multiple" placeholder="Select users">
-              {usersData.map(user => (
+              {Array.isArray(usersData) && usersData.map(user => (
                 <Option key={user.id} value={user.id}>
                   {user.username} ({user.email})
                 </Option>
