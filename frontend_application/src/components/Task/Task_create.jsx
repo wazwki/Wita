@@ -17,27 +17,27 @@ const Task_create = () => {
     const fetchData = async () => {
       try {
         const [tasksResponse, commandsResponse, projectsResponse, usersResponse, companiesResponse] = await Promise.all([
-          axios.get('http://127.0.0.1:8000/api/task/', {
+          axios.get('http://127.0.0.1/api/task/', {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('access')}`
             }
           }),
-          axios.get('http://127.0.0.1:8000/api/command/', {
+          axios.get('http://127.0.0.1/api/command/', {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('access')}`
             }
           }),
-          axios.get('http://127.0.0.1:8000/api/project/', {
+          axios.get('http://127.0.0.1/api/project/', {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('access')}`
             }
           }),
-          axios.get('http://127.0.0.1:8000/api/profile/', {
+          axios.get('http://127.0.0.1/api/profile/', {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('access')}`
             }
           }),
-          axios.get('http://127.0.0.1:8000/api/company/', {
+          axios.get('http://127.0.0.1/api/company/', {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('access')}`
             }
@@ -63,7 +63,7 @@ const Task_create = () => {
     setCreating(true);
     try {
       const response = await axios.post(
-        'http://127.0.0.1:8000/api/task/',
+        'http://127.0.0.1/api/task/',
         values,
         {
           headers: {

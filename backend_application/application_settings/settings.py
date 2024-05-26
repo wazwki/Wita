@@ -127,7 +127,12 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "http://0.0.0.0:5173"
+    "http://0.0.0.0:5173",
+    "http://react:5173",
+    "http://react:80",
+    "http://localhost",
+    "http://127.0.0.1",
+    "http://0.0.0.0",
 ]
 
 SOCIAL_AUTH_JSONFIELD_ENABLED = True

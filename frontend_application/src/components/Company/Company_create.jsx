@@ -14,12 +14,12 @@ const Company_create = () => {
     const fetchUsersAndCurrentUser = async () => {
       try {
         const [usersResponse, currentUserResponse] = await Promise.all([
-          axios.get('http://127.0.0.1:8000/api/profile/', {
+          axios.get('http://127.0.0.1/api/profile/', {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('access')}`
             }
           }),
-          axios.get('http://127.0.0.1:8000/api/user/', {
+          axios.get('http://127.0.0.1/api/user/', {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('access')}`
             }
@@ -52,7 +52,7 @@ const Company_create = () => {
       };
 
       await axios.post(
-        'http://127.0.0.1:8000/api/company/',
+        'http://127.0.0.1/api/company/',
         data,
         {
           headers: {

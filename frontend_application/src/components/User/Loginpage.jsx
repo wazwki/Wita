@@ -11,7 +11,7 @@ const Login = () => {
   const onFinish = async (values) => {
     setLoading(true);
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/token/', values);
+      const response = await axios.post('http://127.0.0.1/api/token/', values);
       localStorage.setItem('access', response.data.access);
       localStorage.setItem('refresh', response.data.refresh);
       localStorage.setItem('user_id', response.data.user_id);
@@ -25,7 +25,7 @@ const Login = () => {
   };
 
   const githubLogin = () => {
-    window.location.href = 'http://127.0.0.1:8000/oauth/login/github/';
+    window.location.href = 'http://127.0.0.1/oauth/login/github/';
   };
 
   return (

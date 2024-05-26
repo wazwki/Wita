@@ -26,7 +26,7 @@ const Register = () => {
   };
 
   const githubLogin = () => {
-    window.location.href = 'http://127.0.0.1:8000/oauth/login/github/';
+    window.location.href = 'http://127.0.0.1/oauth/login/github/';
   };
 
   return (
