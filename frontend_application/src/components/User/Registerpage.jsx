@@ -11,7 +11,7 @@ const Register = () => {
   const onFinish = async (values) => {
     setLoading(true);
     try {
-      await axios.post('http://127.0.0.1:8000/api/register/', values);
+      await axios.post('http://127.0.0.1/api/register/', values);
       message.success('Registration successful!');
       navigate('/login');
     } catch (error) {
