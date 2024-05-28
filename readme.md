@@ -1,15 +1,10 @@
 # Wita.
 
 Project Management Tool.
-
+![Image alt](https://github.com/wazwki/Wita/raw/master/img/welcome-full.png)
 ![Image alt](https://github.com/wazwki/Wita/raw/master/img/progress-many-full.png)
 ![Image alt](https://github.com/wazwki/Wita/raw/master/img/progress-many.png)
-![Image alt](https://github.com/wazwki/Wita/raw/master/img/progress-full.png)
-![Image alt](https://github.com/wazwki/Wita/raw/master/img/progress.png)
-![Image alt](https://github.com/wazwki/Wita/raw/master/img/welcome-full.png)
-![Image alt](https://github.com/wazwki/Wita/raw/master/img/welcome.png)
 ![Image alt](https://github.com/wazwki/Wita/raw/master/img/tablet-full.png)
-![Image alt](https://github.com/wazwki/Wita/raw/master/img/tablet.png)
 ![Image alt](https://github.com/wazwki/Wita/raw/master/img/mobile.png)
 
 
