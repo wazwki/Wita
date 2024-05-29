@@ -8,6 +8,7 @@ A project management platform focused on supporting teamwork that allows users t
 
 #### Technologies:
 - Django for the server side.
+- React for frontend.
 - Django REST Framework (DRF) for creating APIs.
 - PostgreSQL for data storage.
 - Celery for asynchronous task processing.
