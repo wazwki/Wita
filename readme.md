@@ -8,8 +8,9 @@ A project management platform focused on supporting teamwork that allows users t
 
 #### Technologies:
 - Django for the server side.
-- React for frontend.
 - Django REST Framework (DRF) for creating APIs.
+- React for the client side.
+- OpenAPI(SwaggerUI) for API documentation.
 - PostgreSQL for data storage.
 - Celery for asynchronous task processing.
 - Redis for caching and message queuing (with Celery).
@@ -30,6 +31,9 @@ A project management platform focused on supporting teamwork that allows users t
 #### Adaptive design, can use on phone, tablet or computer:
 
 ![tablet-full](https://github.com/wazwki/Wita/raw/master/img/tablet-full.png)
+#### OpenAPI(SwaggerUI) API documentation:
+
+![swagger](https://github.com/wazwki/Wita/raw/master/img/swagger.png)
 
 
 ## Installation
